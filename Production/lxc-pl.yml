@@ -1,0 +1,26 @@
+---
+  - name: Start Containers
+    hosts: 127.0.0.1
+    remote_user: root
+    become: yes
+    
+    tasks:
+            - name: Installing Requirements
+              package:
+                      name: 
+                        - python3-pip
+                        - python3-virtualenv
+                        - python3-setuptools 
+                      state: latest
+            - name: Start a container
+              lxc_container:
+                      name: '{{ item }}'
+                      state: started
+              with_items:
+                      - web1
+                      - web2
+                      - db1
+                      - db2
+            - name: Showing Stats
+              raw: lxc-ls --fancy
+
