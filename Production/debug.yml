@@ -1,0 +1,6 @@
+---
+- hosts: 127.0.0.1
+  tasks:
+  - name: debug
+    shell: /usr/bin/uptime
+    register: result
