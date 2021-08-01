@@ -1,0 +1,7 @@
+[kirekhar]
+192.168.20.30
+[kirekhar:vars]
+ansible_user=n.razavi@ramand.local
+ansible_password=Llolipop70
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
