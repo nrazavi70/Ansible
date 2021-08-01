@@ -1,0 +1,5 @@
+---
+- name: Zabbix-Linux-Clients | Copy Installation Files to Remote Hosts
+  template:
+          src: 'roles/Client-Linux/files/zabbix_agent.conf'
+          dest: '/root'

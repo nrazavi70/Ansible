@@ -1,0 +1,5 @@
+---
+- name: Zabbix-Windows-Clients | Copy Installation Files to Remote Hosts
+  template:
+          src: 'roles/Client-Windows/files/zabbix_agent.conf'
+          dest: 'c:\'

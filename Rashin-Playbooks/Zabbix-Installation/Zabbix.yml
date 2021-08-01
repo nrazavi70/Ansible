@@ -1,0 +1,6 @@
+---
+- name: Linux Agent Setup
+  hosts: Linux-Clients 
+  remote_user: root
+  roles:
+          - Client-Linux
