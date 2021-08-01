@@ -4,7 +4,6 @@
   with_items:
     - postgresql
     - postgresql-contrib
-    - python-psycopg2
 
 - name: POSTGRES | Create mattermost database
   become: true
