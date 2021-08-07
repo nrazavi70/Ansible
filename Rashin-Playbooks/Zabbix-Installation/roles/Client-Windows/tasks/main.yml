@@ -1,8 +1,9 @@
 ---
-- name: Zabbix-Windows-Clients | Copy Installation Files to Remote Hosts
-  template:
-          src: 'roles/Client-Windows/templates/zabbix_agent.conf'
-          dest: 'c:\'
-  template:
+- name: Zabbix-Windows-Clients | Copy Config File to Remote Hosts
+  ansible.windows.win_template:
+          src: roles/Client-Windows/templates/zabbix_agent.conf.j2
+          dest: C:\zabbix_agent.conf
+- name: Zabbix-Windows-Clients | Copy Installation File to Remote Hosts
+  ansible.windows.win_copy:
           src: 'roles/Client-Windows/files/zabbix_agent.exe'
-          dest: 'c:\'
+          dest: 'c:\zabbix_agent.exe'

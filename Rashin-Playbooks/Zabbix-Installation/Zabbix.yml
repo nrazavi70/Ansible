@@ -1,20 +1,19 @@
 ---
-# - name: Linux Agent Setup
-#   hosts: Linux-Clients 
-#   remote_user: root
-#   roles:
-#           - Client-Linux
+- name: Linux Agent Setup
+  hosts: Linux-Clients 
+  remote_user: root
+  roles:
+          - Client-Linux
 - name: Windows Agent Setup
   hosts: Windows-Clients
   gather_facts: false
-  vars:
-          ansible_user: "administrator@RAMAND.LOCAL"
-          ansible_password: "RamandQAZ"
-          ansible_connection: winrm
-          ansible_winrm_transport: kerberos
-          ansible_port: 5986
-          ansible_winrm_server_cert_validation: ignore
-          #ansible_winrm_kinit_cmd: "/opt/CA/uxauth/bin/uxconsole -krb -init"
-          ansible_winrm_kerberos_delegation: true
+  # vars:
+  #         ansible_user: "administrator@RAMAND.LOCAL"
+  #         ansible_password: "RamandQAZ"
+  #         ansible_connection: winrm
+  #         ansible_winrm_transport: kerberos
+  #         ansible_port: 5985
+  #         #ansible_winrm_realm: "RAMAND.LOCAL"
+          #ansible_winrm_kerberos_delegation: yes
   roles:
           - Client-Windows
