@@ -1,9 +1,16 @@
 ---
-- name: Zabbix-Windows-Clients | Copy Config File to Remote Hosts
+- name: Zabbix-Windows-Clients | Creating Directory for Installation Files
+  ansible.windows.win_file:
+          path: C:\Zabbix
+          state: directory
+- name: Zabbix-Windows-Clients | Sending Config File to Remote Hosts
   ansible.windows.win_template:
           src: roles/Client-Windows/templates/zabbix_agent.conf.j2
-          dest: C:\zabbix_agent.conf
-- name: Zabbix-Windows-Clients | Copy Installation File to Remote Hosts
+          dest: C:\Zabbix\zabbix_agent.conf
+- name: Zabbix-Windows-Clients | Sending Installation File to Remote Hosts
   ansible.windows.win_copy:
           src: 'roles/Client-Windows/files/zabbix_agent.exe'
-          dest: 'c:\zabbix_agent.exe'
+          dest: 'C:\Zabbix\zabbix_agent.exe'
+- name: Zabbix-Windows-Clients | Installing Zabbix as Service
+  ansible.windows.win_shell: |
+          C:\Zabbix\zabbix_agent.exe -i -c C:\Zabbix\zabbix_agent.conf

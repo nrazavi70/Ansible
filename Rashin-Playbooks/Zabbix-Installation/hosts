@@ -5,13 +5,7 @@
 
 [Windows-Clients]
 ast-rodc.ramand.local
-
-[Windows-Clients:vars]
-ansible_user="administrator@RAMAND.LOCAL"
-ansible_password="RamandQAZ"
-ansible_connection=winrm
-ansible_winrm_transport=kerberos
-ansible_port=5985
+chia-machine.ramand.local
 
 [Proxies]
 
