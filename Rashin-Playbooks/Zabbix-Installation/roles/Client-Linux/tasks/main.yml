@@ -1,16 +1,11 @@
 ---
-- name: Zabbix-Linux-Clients | Creating Directory for Installation Files
-  file:
-          path: /root/Zabbix
-          state: directory
+- name: Zabbix-Linux-Clients | Zabbix Agent Installation
+  package:
+          name: zabbix-agent
+          state: present
 - name: Zabbix-Linux-Clients | Sending Config File to Remote Hosts
   template:
           src: 'roles/Client-Linux/templates/zabbix_agent.conf'
-          dest: '/root/Zabbix'
-# - name: Zabbix-Linux-Clients | Sending Installation File to Remote Hosts
-#   ansible.windows.win_copy:
-#           src: 'roles/Client-Windows/files/zabbix_agent.exe'
-#           dest: 'C:\Zabbix\zabbix_agent.exe'
-# - name: Zabbix-Linux-Clients| Installing Zabbix as Service
-#   ansible.windows.win_shell: |
-#           C:\Zabbix\zabbix_agent.exe -i -c C:\Zabbix\zabbix_agent.conf
+          dest: '/etc/zabbix/zabbix_agentd.conf'
+  notify:
+          - restart zabbix agent
