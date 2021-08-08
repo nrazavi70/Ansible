@@ -5,6 +5,11 @@
   notify:
           - apt update
 
+- name: Zabbix-Linux-Clients | Making sure some directory exists
+  file:
+          path: /etc/zabbix/zabbix_agentd.conf.d
+          state: directory
+
 - name: Zabbix-Linux-Clients | Zabbix Agent Installation
   package:
           name: zabbix-agent
