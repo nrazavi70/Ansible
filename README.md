@@ -80,32 +80,32 @@ your playbook such as the credentials you want to use for connection, the type o
 variables in your playbook like so:
 
 ```
-- name: Linux Agent Setup
-hosts: Linux-Clients
-remote_user: root
-roles:
-- Client-Linux
-- name: Windows Agent Setup
-hosts: Windows-Clients
-gather_facts: false
-vars:
-ansible_user: "administrator@RAMAND.LOCAL"
-ansible_password: "*******"
-ansible_connection: winrm
-ansible_winrm_transport: kerberos
-ansible_port: 5985
-roles:
-- Client-Windows
+-  name: Linux Agent Setup
+   hosts: Linux-Clients
+   remote_user: root
+   roles:
+      - Client-Linux
+-  name: Windows Agent Setup
+   hosts: Windows-Clients
+   gather_facts: false
+   vars:
+      ansible_user: "administrator@RAMAND.LOCAL"
+      ansible_password: "*******"
+      ansible_connection: winrm
+      ansible_winrm_transport: kerberos
+      ansible_port: 5985
+   roles:
+      - Client-Windows
 ```
 You can enter these vars in your inventory file as well like this:
 ```
 [Linux-Clients]
-192.168.20.
-192.168.20.
-192.168.20.
+192.168.20.2
+192.168.20.3
+192.168.20.4
 
 [Windows-Clients]
-ast-rodc.ramand.local
+RODC.ramand.local
 
 [Windows-Clients:vars]
 ansible_user="administrator@RAMAND.LOCAL"
@@ -141,46 +141,48 @@ already queued in one task(this means that the task was ran and not skipped), an
 twice. An example would be as follows:
 
 ```
-- hosts: all
-vars:
-# used for filepaths
-site_name: "tutorialinux"
-# used in the website's markup
-site_title: "Hope."
-# used in the web server configuration file
-site_url: "www.tutorialinux.com"
-tasks:
-- name: Install nginx.
-package: name=nginx state=latest
-- name: Create website directory
-file: path="/var/www/{{ site_name }}" state=directory mode=
-- name: Create main nginx config file
-template:
-src: "templates/nginx.conf"
-dest: "/etc/nginx/nginx.conf"
-notify:
-- restart nginx
-- name: Create nginx vhost config file
-template:
-src: "templates/website.conf"
-dest: "/etc/nginx/conf.d/{{ site_name }}.conf"
-notify:
-- restart nginx
-- name: Create website
-template:
-src: "templates/index.html"
-dest: "/var/www/{{ site_name }}/index.html"
-- name: Remove default nginx vhost configuration
-file: path=/etc/nginx/sites-enabled/default state=absent
-notify:
-- restart nginx
+-  hosts: all
+   vars:
+      # used for filepaths
+      site_name: "tutorialinux"
+      # used in the website's markup
+      site_title: "Hope."
+      # used in the web server configuration file
+      site_url: "www.tutorialinux.com"
+   
+   tasks:
+      - name: Install nginx.
+        package: name=nginx state=latest
+      
+      - name: Create website directory
+        file: path="/var/www/{{ site_name }}" state=directory mode=
+        
+      - name: Create main nginx config file
+        template:
+          src: "templates/nginx.conf"
+          dest: "/etc/nginx/nginx.conf"
+        notify:
+        - restart nginx
+      - name: Create nginx vhost config file
+        template:
+          src: "templates/website.conf"
+          dest: "/etc/nginx/conf.d/{{ site_name }}.conf"
+        notify:
+        - restart nginx
+      - name: Create website
+        template:
+          src: "templates/index.html"
+          dest: "/var/www/{{ site_name }}/index.html"
+      - name: Remove default nginx vhost configuration
+        file: path=/etc/nginx/sites-enabled/default state=absent
+        notify:
+        - restart nginx
 
-handlers:
-
-- name: restart nginx
-service:
-name: nginx
-state: restarted
+    handlers:
+      - name: restart nginx
+        service:
+          name: nginx
+          state: restarted
 ```
 Notice that the handler "restart nginx" is called in many tasks. Some important notes about the behavior of this example:
 
@@ -259,42 +261,46 @@ Below you can see an example of a playbook with its tasks written inside:
 # (make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)
 
 - hosts: all
-gather_facts: False
-remote_user: ubuntu
-become: yes
-become_user: root
-become_method: sudo
+  gather_facts: False
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+  become_method: sudo
 
-tasks:
+  tasks:
+    - name: Update Packages
+      raw: (apt-get update && apt-get -y upgrade)
+      
+    - name: Install Python 2
+      raw: test -e /usr/bin/python || (apt-get update && apt-get install -y python)
+      
+    - name: Fancy way of doing authorized_keys
+      authorized_key: user=root
+                    exclusive=no
+                    key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+                    
+    - name: COMMON | Set environment
+      blockinfile:
+        dest: /etc/environment
+        block: |
+          LC_ALL=en_US.UTF-8
+          LANG=en_US.UTF-8
+      register: newenv
+      
+    - block:
+      - name: COMMON | Generate locales
+        raw: locale-gen en_US.UTF-8
+        
+      - name: COMMON | Reconfigure locales
+        raw: dpkg-reconfigure locales
+      # only run this task block when we've just changed /etc/environment
+      when: newenv.changed
 
-- name: Update Packages
-raw: (apt-get update && apt-get -y upgrade)
-- name: Install Python 2
-raw: test -e /usr/bin/python || (apt-get update && apt-get install -y python)
-- name: Fancy way of doing authorized_keys
-authorized_key: user=root
-exclusive=no
-key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-- name: COMMON | Set environment
-blockinfile:
-dest: /etc/environment
-block: |
-LC_ALL=en_US.UTF-
-LANG=en_US.UTF-
-register: newenv
-- block:
-- name: COMMON | Generate locales
-raw: locale-gen en_US.UTF-
-- name: COMMON | Reconfigure locales
-raw: dpkg-reconfigure locales
-# only run this task block when we've just changed /etc/environment
-when: newenv.changed
 
-
-#- name: Create /root/.ssh
-# file: path=/root/.ssh state=directory mode=
-#- name: Create /root/.ssh/authorized_keys from our local ssh pubkey
-# lineinfile: dest=/root/.ssh/authorized_keys line="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    #- name: Create /root/.ssh
+    # file: path=/root/.ssh state=directory mode=
+    #- name: Create /root/.ssh/authorized_keys from our local ssh pubkey
+    # lineinfile: dest=/root/.ssh/authorized_keys line="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 ```
 In more complex playbooks, you can use structures to make things clearer, more readable and scalable.
 
@@ -318,11 +324,11 @@ Basically we tag a number of actions with a role name and then call that role na
 
 ```
 - name: Webserver Setup
-hosts: webservers
-remote_user: root
-roles:
-- common
-- web
+  hosts: webservers
+  remote_user: root
+  roles:
+    - common
+    - web
 ```
 What this example does is that it has a task within itself to apply the actions within "common" and "web" role to hosts within "webservers" category in the An
 sible Inventory File with the remote user "root".
@@ -330,11 +336,11 @@ sible Inventory File with the remote user "root".
 An example of writing a role file would be like below:
 ```
 - name: COMMON | Install basic packages
-package: name={{ item }} state=present
-with_items:
-- vim
-- nano
-- curl
+  package: name={{ item }} state=present
+  with_items:
+      - vim
+      - nano
+      - curl
 ```
 This piece of YAML names the role "COMMON" and installs all the packages stated at the end. You can apply this role to any server you want and it would
 install "Vim" , "Nano" and "Curl" on those servers.
@@ -385,18 +391,18 @@ Main Ansible playbook file:
 ```
 ---
 - name: Database Setup
-hosts: dbservers
-remote_user: root
-roles:
-- common
-- database
+  hosts: dbservers
+  remote_user: root
+  roles:
+    - common
+    - database
+    
 - name: Webserver Setup
-hosts: webservers
-remote_user: root
-roles:
-- common
-- web
-
+  hosts: webservers
+  remote_user: root
+  roles:
+    - common
+    - web
 ```
 Inventory file:
 ```
@@ -429,23 +435,18 @@ a.Tasks main file:
 ```
 ---
 - name: COMMON | Install basic packages
-package: name={{ item }} state=present
-with_items:
-- wget
-- vim
-- nano
-- curl
-
+  package: name={{ item }} state=present
+  with_items:
+    - wget
+    - vim
+    - nano
+    - curl
 ```
 b.Handlers main file:
 ```
-
-```
-Handlers Main.yml Example
-```
 ---
 - name: restart postgres
-service: name=postgresql state=restarted
+  service: name=postgresql state=restarted
 ```
 
 # YAML Structure
@@ -495,11 +496,11 @@ A dictionary can have other dictionaries as values and within that dictionary yo
 below:
 ```
 - Martin:
-name: Martin D'vloper
-job: Developer
-skill:
-- lisp
-- fortran
-- erlang
+        name: Martin D'vloper
+        job: Developer
+        skill:
+            - lisp
+            - fortran
+            - erlang
 ```
 
