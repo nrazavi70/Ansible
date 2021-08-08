@@ -1,21 +1,21 @@
 - 1 Ansible
-   - 1 1 Ansible Ad-hoc Commands
-   - 1 2 Ansible Common Options
-   - 1 3 Ansible Configuration File
-   - 1 4 Ansible Connection to Windows Host
-   - 1 5 Ansible Handlers
-   - 1 6 Ansible Installation
-   - 1 7 Ansible Inventory File
-   - 1 8 Ansible Modules
-   - 1 9 Ansible Playbooks
-   - 1 10 Ansible Playbook Structure
-   - 1 11 Ansible Roles
-   - 1 12 Ansible Source Host Preparation
-   - 1 13 Ansible Target Machine Preparation
-   - 1 14 Ansible Templates
-   - 1 15 Ansible Variables
-   - 1 16 Ansible with Structure Examples
-   - 1 17 YAML Structure
+   - 1.1 Ansible Ad-hoc Commands
+   - 1.2 Ansible Common Options
+   - 1.3 Ansible Configuration File
+   - 1.4 Ansible Connection to Windows Host
+   - 1.5 Ansible Handlers
+   - 1.6 Ansible Installation
+   - 1.7 Ansible Inventory File
+   - 1.8 Ansible Modules
+   - 1.9 Ansible Playbooks
+   - 1.10 Ansible Playbook Structure
+   - 1.11 Ansible Roles
+   - 1.12 Ansible Source Host Preparation
+   - 1.13 Ansible Target Machine Preparation
+   - 1.14 Ansible Templates
+   - 1.15 Ansible Variables
+   - 1.16 Ansible with Structure Examples
+   - 1.17 YAML Structure
 
 
 # Ansible
@@ -648,16 +648,9 @@ List example
 Keys and values are like so:
 
 ```
-Keys and Values example
-```
-```
 key: value
 ```
 Values can be lists as well. You can see examples of this below:
-
-```
-Lists as values
-```
 ```
 key:
 ```
@@ -679,10 +672,6 @@ key3: value3
 key4: value4
 ```
 You can also represent it like this:
-
-```
-Dictionaries as values 2
-```
 ```
 Main_key: {key1: value1, key2: value2, key3: value3, key4: value4}
 ```
@@ -691,7 +680,7 @@ below:
 
 
 Complicated YAML example
-
+'''
 - Martin:
 name: Martin D'vloper
 job: Developer
@@ -699,5 +688,5 @@ skill:
 - lisp
 - fortran
 - erlang
-
+'''
 
