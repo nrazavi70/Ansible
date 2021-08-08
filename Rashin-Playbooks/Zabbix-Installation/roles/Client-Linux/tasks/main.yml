@@ -1,8 +1,15 @@
 ---
+- name: Zabbix-Linux-Clients | Installing Zabbix Repository
+  apt:
+          deb: https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1+{{ ansible_distribution_release }}_all.deb
+  notify:
+          - apt update
+
 - name: Zabbix-Linux-Clients | Zabbix Agent Installation
   package:
           name: zabbix-agent
           state: present
+
 - name: Zabbix-Linux-Clients | Sending Config File to Remote Hosts
   template:
           src: 'roles/Client-Linux/templates/zabbix_agent.conf'
