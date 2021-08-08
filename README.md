@@ -47,21 +47,13 @@ scripts.
 
 Here are some examples:
 
-```
-Argument What the argument does
-```
-```
--k Prompts for passwords whenever needed
-```
-```
--u Runs the script on the target machine as the user stated
-```
-```
--i Specify the inventory file
-```
-```
--a When you want to run a raw command
-```
+|Argument|What the argument does|
+|:-:|:-:|
+|-k|Prompts for passwords whenever needed|
+|-u|Runs the script on the target machine as the user stated|
+|-i|Specify the inventory file|
+|-a|When you want to run a raw command|
+
 To find a complete list of all the options in Ansible you can visit <https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html>
 
 # Ansible Configuration File
