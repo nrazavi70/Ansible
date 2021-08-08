@@ -18,35 +18,9 @@
    - 1.17 YAML Structure
 
 
-# Ansible
-
-```
-Ansible Ad-hoc Commands
-Ansible Common Options
-Ansible Configuration File
-Ansible Connection to Windows Host
-Ansible Handlers
-Ansible Installation
-Ansible Inventory File
-Ansible Modules
-Ansible Playbooks
-Ansible Playbook Structure
-Ansible Roles
-Ansible Source Host Preparation
-Ansible Target Machine Preparation
-Ansible Templates
-Ansible Variables
-Ansible with Structure Examples
-YAML Structure
-```
-
 # Ansible Ad-hoc Commands
 
 To run one time commands with Ansible you gotta follow the pattern below:
-
-```
-Ansible Adhoc template
-```
 ```
 ansible [machine group/single machine] -m [module] -a [args] [Optional Common Options]
 ```
@@ -62,9 +36,6 @@ Lastly you can enter some common options that are sometimes necessary and someti
 
 An example of this script would be as follows:
 
-```
-Ansible Adhoc Example
-```
 ```
 ansible 192.168.1.100 -m package -a "name=nginx state=installed" -i hosts -u root
 ```
@@ -93,35 +64,22 @@ Argument What the argument does
 ```
 To find a complete list of all the options in Ansible you can visit <https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html>
 
-
-### 1.
-
-### 2.
-
-### 3.
-
-### 4.
-
 # Ansible Configuration File
 
 The Ansible configuration file contains many settings which can be helpful specially when you are working around with playbooks. We have multiple
 Configuration files which have precedence over each other. The hierarchy of them are as follows:
 
 ```
-ANSIBLE_CONFIG (Environment variable if set)
-ansible.cfg (in the current directory)
-~/.asnible.cfg (in the home directory)
-/etc/ansible/ansible.cfg
+1. ANSIBLE_CONFIG (Environment variable if set)
+2. ansible.cfg (in the current directory)
+3. ~/.asnible.cfg (in the home directory)
+4. /etc/ansible/ansible.cfg
 ```
 
 # Ansible Connection to Windows Host
 
 First make sure you have installed Ansible correctly. Some issues may occur if you are using python2.7 as your interpreter. You can check this with this
 command:
-
-```
-Checking ansible python interpreter
-```
 ```
 ansible --version | grep "python version"
 ```
@@ -130,10 +88,6 @@ your playbook such as the credentials you want to use for connection, the type o
 variables in your playbook like so:
 
 ```
-Windows Vars
-```
-### ---
-
 - name: Linux Agent Setup
 hosts: Linux-Clients
 remote_user: root
@@ -150,47 +104,33 @@ ansible_winrm_transport: kerberos
 ansible_port: 5985
 roles:
 - Client-Windows
-
+```
 You can enter these vars in your inventory file as well like this:
-
-```
-Inventory file with vars
-```
 ```
 [Linux-Clients]
 192.168.20.
 192.168.20.
 192.168.20.
-```
-```
+
 [Windows-Clients]
 ast-rodc.ramand.local
-```
-```
+
 [Windows-Clients:vars]
 ansible_user="administrator@RAMAND.LOCAL"
 ansible_password="*******"
 ansible_connection=winrm
 ansible_winrm_transport=kerberos
 ansible_port=
-```
-```
+
 [Proxies]
-```
-You can test if you are connecting to windows servers successfully with the following command:
 
 ```
-Testing WinRM login on Ansible
-```
+You can test if you are connecting to windows servers successfully with the following command:
 ```
 kinit USERNAME.DOMAIN_NAME
 ```
 
 If you are using HTTP you have to config winrm to allow unencrypted logins as well with the following command:
-
-```
-Allowing Unencrypted WinRM Logins for HTTP
-```
 ```
 Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value true
 ```
@@ -209,8 +149,6 @@ already queued in one task(this means that the task was ran and not skipped), an
 twice. An example would be as follows:
 
 ```
-Handler Example
-```
 - hosts: all
 vars:
 # used for filepaths
@@ -219,10 +157,7 @@ site_name: "tutorialinux"
 site_title: "Hope."
 # used in the web server configuration file
 site_url: "www.tutorialinux.com"
-
-```
 tasks:
-```
 - name: Install nginx.
 package: name=nginx state=latest
 - name: Create website directory
@@ -248,109 +183,52 @@ file: path=/etc/nginx/sites-enabled/default state=absent
 notify:
 - restart nginx
 
-```
 handlers:
-```
+
 - name: restart nginx
 service:
 name: nginx
 state: restarted
-
+```
 Notice that the handler "restart nginx" is called in many tasks. Some important notes about the behavior of this example:
 
-```
 For example if the tasks "Create main nginx config file" and "Create nginx vhost config file" both are running, while the handler "restart nginx" is
 called in them both, the playbook is gonna restart nginx only ONCE.
 If a task is skipped (since it was already done which happens when you run the playbook twice or one of the servers already had the same nginx
 config file) the handler at that task won't be queued at all and would be skipped as well.
 Instead of running the restart task many times, we saved time and space by using handlers.
-```
-
-### 1.
-
-### 2.
-
-### 1.
-
-### 2.
-
-### 3.
-
 # Ansible Installation
 
-To install Ansible you have to make sure that its interpreter is python3 (This was not necessary before.). To do this you have to do the following:
-
-```
-Enter the following command to download get pip file. We need this to install pip which is the python package manager.
-```
-```
-Download getpip.py File
-```
+To install Ansible you have to make sure that its interpreter is python3 (This was not necessary before.). Enter the following command to download get pip file. We need this to install pip which is the python package manager. To do this you have to do the following:
 ```
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 ```
-```
 Use python3 to run the file you just downloaded:
-```
-```
-Running getpip.py
-```
 ```
 python3 get-pip.py --user
 ```
 If you want to use Ansible to manage windows servers you also have to install pywinrm. To have to do the following:
-
-```
 First we install pywinrm since you need WinRM to work with windows:
-```
-```
-Installing pywinrm for windows management with Ansible
-```
 ```
 pip install pywinrm
 ```
-```
 The you have to install kerberos module with pip which can be problematic sometimes so first run this command:
 ```
-```
-Kerberos module installation with pip
-```
-```
 pip install kerberos
-```
 ```
 But if you were experiencing some issues with kerberos module installation you can fix it by installing couple of applications via apt package
 manager:
 ```
-```
-Requirements of gssapi and social-auth-kerberos modules
-```
-```
 sudo apt-get install python3-dev
 sudo apt-get install libkrb5-dev
 ```
-```
 and then install GSSAPI and social-auth-kerberos to fix the issue with kerberos module installation:
-```
-```
-GSSAPI and Social-Auth-Kerberos Module installation
-```
 ```
 pip install gssapi
 pip install social-auth-kerberos
 ```
-```
 Now you can install kerberos module and you would have no trouble connecting to windows machines via WinRM. Do not forget to set the
 required data for WinRM connection in case you want to connect to windows. You can learn about these information here.
-```
-
-### 1.
-
-### 2.
-
-### 3.
-
-### 4.
 
 # Ansible Inventory File
 
@@ -359,10 +237,10 @@ name of these categories and also host addresses of target machines are defined 
 which have precedence over each other. The hierarchy of them are as follows:
 
 ```
-Specified in the script
-Specified in the playbook
-Hosts file in the environment
-Hosts file at /etc/Ansible/Hosts
+1.Specified in the script
+2.Specified in the playbook
+3.Hosts file in the environment
+4.Hosts file at /etc/Ansible/Hosts
 ```
 
 # Ansible Modules
@@ -380,20 +258,14 @@ and host groups that you want those configurations to be applied to in a YAML fi
 The structure of an Ansible playbook command looks like this:
 
 ```
-Ansible Playbook Command Example
-```
-```
 ansible-playbook [PLAYBOOK_FILE] -i [INVENTORY_FILE] -a [args]
 ```
 Below you can see an example of a playbook with its tasks written inside:
 
 ```
-Playbook Example
-```
-```
 # Run with ansible-playbook <filename> -k
 # (make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)
-```
+
 - hosts: all
 gather_facts: False
 remote_user: ubuntu
@@ -401,9 +273,8 @@ become: yes
 become_user: root
 become_method: sudo
 
-```
 tasks:
-```
+
 - name: Update Packages
 raw: (apt-get update && apt-get -y upgrade)
 - name: Install Python 2
@@ -427,11 +298,9 @@ raw: dpkg-reconfigure locales
 # only run this task block when we've just changed /etc/environment
 when: newenv.changed
 
-```
+
 #- name: Create /root/.ssh
 # file: path=/root/.ssh state=directory mode=
-```
-```
 #- name: Create /root/.ssh/authorized_keys from our local ssh pubkey
 # lineinfile: dest=/root/.ssh/authorized_keys line="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 ```
@@ -443,24 +312,18 @@ In more complex playbooks, you can use structures to make things clearer, more r
 For readability, scalability and maintenance a structure is recommended for Ansible complex playbooks. Instead of learning this by heart you can simply
 use the python code below to create the structure automatically. Just run the python code and feed it with playbook name and roles you want and it
 creates the structure required.
-
-```
-Ansible Sctructure Python
-```
 ```
 python ./create_playbook.py [PLAYBOOK_NAME] [ROLE1] [ROLE2] [ROLE3] ...
 ```
 Here is an example of what it would look like:
-
-
-
+```
+python ./create_playbook.py Zabbix Agent Proxy Web Database
+```
 # Ansible Roles
 
 Another one of Ansible features are Ansible roles. We can make use of Ansible roles when we are encountering reusable tasks, templates and handlers.
 Basically we tag a number of actions with a role name and then call that role name in the playbook.
 
-```
-Role Usage Example
 ```
 - name: Webserver Setup
 hosts: webservers
@@ -468,14 +331,11 @@ remote_user: root
 roles:
 - common
 - web
-
+```
 What this example does is that it has a task within itself to apply the actions within "common" and "web" role to hosts within "webservers" category in the An
 sible Inventory File with the remote user "root".
 
 An example of writing a role file would be like below:
-
-```
-Role Example
 ```
 - name: COMMON | Install basic packages
 package: name={{ item }} state=present
@@ -483,7 +343,7 @@ with_items:
 - vim
 - nano
 - curl
-
+```
 This piece of YAML names the role "COMMON" and installs all the packages stated at the end. You can apply this role to any server you want and it would
 install "Vim" , "Nano" and "Curl" on those servers.
 
@@ -505,9 +365,6 @@ You can enter the script below to run the playbook but keep in mind that the ssh
 work.
 
 ```
-Ansible Preparation Playbook Script
-```
-```
 ansible-playbook prepare_ansible_target.yml -i hosts -u [SUDOER_USER] -k --ask-sudo-pass
 ```
 
@@ -527,29 +384,14 @@ that you intend to edit.
 You can user variables in Ansible. This comes in handy specially in playbooks. All you have to do is to define the variables as "vars" at the same level as
 "hosts" and when you want to call them you have to use double curly brackets "{{var1}}".
 
-
-### 1.
-
-### 2.
-
-```
-a.
-```
-```
-b.
-```
 # Ansible with Structure Examples
 
 Located at root directory :
 
-```
+
 Main Ansible playbook file:
 ```
-```
-Main Ansible Playbook File Example
-```
-### ---
-
+---
 - name: Database Setup
 hosts: dbservers
 remote_user: root
@@ -564,11 +406,7 @@ roles:
 - web
 
 ```
-Inventory file
-```
-```
-Inventory File Example
-```
+Inventory file:
 ```
 [Category1]
 Host
@@ -594,14 +432,10 @@ ansible_ssh_port = 5986
 Located at Roles are the directories with role name and in each role there are "files" , "handlers" , "meta" , "tasks" , "templates" and "vars" directories. In
 "handlers" and "tasks" there is a Main.yml file that contains handlers and tasks of that role:
 
-```
-Tasks main file:
-```
-```
-Tasks Main.yml Example
-```
-### ---
 
+a.Tasks main file:
+```
+---
 - name: COMMON | Install basic packages
 package: name={{ item }} state=present
 with_items:
@@ -611,10 +445,8 @@ with_items:
 - curl
 
 ```
-Handlers main file:
+b.Handlers main file:
 ```
-
-b.
 
 ```
 Handlers Main.yml Example
@@ -623,7 +455,7 @@ Handlers Main.yml Example
 
 - name: restart postgres
 service: name=postgresql state=restarted
-
+```
 
 # YAML Structure
 
@@ -638,13 +470,11 @@ and values are separated with ":".
 An example of a list in YAML is:
 
 ```
-List example
-```
 - item1
 - item2
 - item3
 - item4
-
+```
 Keys and values are like so:
 
 ```
@@ -653,17 +483,12 @@ key: value
 Values can be lists as well. You can see examples of this below:
 ```
 key:
-```
 - value1
 - value2
 - value3
 - value4
-
+```
 Dictionaries can be values as well. An example of it would be like this:
-
-```
-Dictionaries as values
-```
 ```
 Main_key:
 key1: value1
@@ -677,10 +502,7 @@ Main_key: {key1: value1, key2: value2, key3: value3, key4: value4}
 ```
 A dictionary can have other dictionaries as values and within that dictionary you can have a key that has a list as its value. You can see an example of this
 below:
-
-
-Complicated YAML example
-'''
+```
 - Martin:
 name: Martin D'vloper
 job: Developer
@@ -688,5 +510,5 @@ skill:
 - lisp
 - fortran
 - erlang
-'''
+```
 
