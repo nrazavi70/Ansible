@@ -451,8 +451,7 @@ b.Handlers main file:
 ```
 Handlers Main.yml Example
 ```
-### ---
-
+---
 - name: restart postgres
 service: name=postgresql state=restarted
 ```
