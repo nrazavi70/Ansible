@@ -16,6 +16,7 @@
    - 1.15 Ansible Variables
    - 1.16 Ansible with Structure Examples
    - 1.17 YAML Structure
+   - 1.18 Ansible Debugging
 
 
 # Ansible Ad-hoc Commands
@@ -504,3 +505,15 @@ below:
             - erlang
 ```
 
+# Ansible Debugging
+To check if your Ansible scripts are present with an issue you can use the debug module. Using it is fairly easy, you just have to give the task a name and call debug module with the single "msg" argument which holds the value you want to see.
+```
+---
+- name: Testing Info
+  debug: msg="{{ ansible_distribution_release }}"
+```
+This here shows the distribution name when you run it after Ansible has gather facts about your OS.
+Another way you can see some info about your destination machine is with the **Setup** module. Just run the adhoc command below and point it towards the target servers.
+```
+ansible TARGETS -i INVENTORY_FILE -m setup
+```
