@@ -1,0 +1,12 @@
+[Linux-Clients]
+192.168.20.66
+192.168.20.79
+192.168.20.76
+
+[Windows-Clients]
+ast-rodc.ramand.local
+chia-machine.ramand.local
+
+[Proxies]
+
+

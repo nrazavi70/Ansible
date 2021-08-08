@@ -1,0 +1,11 @@
+---
+- name: Zabbix-Linux-Clients | Zabbix Agent Installation
+  package:
+          name: zabbix-agent
+          state: present
+- name: Zabbix-Linux-Clients | Sending Config File to Remote Hosts
+  template:
+          src: 'roles/Client-Linux/templates/zabbix_agent.conf'
+          dest: '/etc/zabbix/zabbix_agentd.conf'
+  notify:
+          - restart zabbix agent
