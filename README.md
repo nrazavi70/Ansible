@@ -2,7 +2,7 @@
 You can use this easily in 3 steps  
 1. Clone this repo
   ```
-  git clone 
+  git clone https://github.com/nrazavi70/Ansible.git
   ```
 2. Edit the host file and enter your target machine addresses. [**You have to enter the domain name for target machines that use windows**]  
   ```
